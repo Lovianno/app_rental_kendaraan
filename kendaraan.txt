@@ -1,0 +1,3 @@
+L001QT,Mobil,Fortuner VRZ 2020,750000,0
+L4625ZX,Sepeda Motor,Kawasaki ZX25RR 2022,650000,0
+L5564KS,Sepeda Motor,Honda Beat 2021,150000,0
