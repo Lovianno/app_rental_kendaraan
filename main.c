@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 typedef struct{
     char nopol[10];
@@ -31,7 +32,7 @@ void tampilkanKendaraan(Kendaraan *knd, int jmlKendaraan) {
         return;
     }
     for (int i = 0; i < jmlKendaraan; i++) {
-        printf("___________________________\n");
+        printf("_________\n");
         printf("Kendaraan ke-%d\n", i + 1);
         printf("Nopol: %s\n", knd[i].nopol);
         printf("Jenis Kendaraan: %s\n", knd[i].jenis);
@@ -46,16 +47,119 @@ void tampilkanKendaraan(Kendaraan *knd, int jmlKendaraan) {
     }
 }
 
+void sortingKendaraan(Kendaraan *knd, int jmlKendaraan, char mode, char order) {
+    // Metode Bubble Sort
+    for (int i = 0; i < jmlKendaraan - 1; i++) {
+        for (int j = jmlKendaraan - 1; j > i; j--) {
+            int swap = 0; // swap pengkondisian untuk penggeseran (bubble sort)
+
+            switch (mode) {
+                case 'h': // Berdasarkan Harga
+                    if ((order == 'a' || order == 'A') && knd[j].harga < knd[j - 1].harga)
+                        swap = 1;
+                    else if ((order == 'b' || order == 'B') && knd[j].harga > knd[j - 1].harga)
+                        swap = 1;
+                    break;
+
+                case 'n': // Berdasarkan NOPOL
+                    if ((order == 'a' || order == 'A') && strcmp(knd[j].nopol, knd[j - 1].nopol) < 0)
+                        swap = 1;
+                    else if ((order == 'b' || order == 'B') && strcmp(knd[j].nopol, knd[j - 1].nopol) > 0)
+                        swap = 1;
+                    break;
+
+                case 'j': // Berdasarkan Jenis
+                    if ((order == 'a' || order == 'A') && strcmp(knd[j].jenis, knd[j - 1].jenis) < 0)
+                        swap = 1;
+                    else if ((order == 'b' || order == 'B') && strcmp(knd[j].jenis, knd[j - 1].jenis) > 0)
+                        swap = 1;
+                    break;
+
+                case 't': // Berdasarkan Tipe
+                    if ((order == 'a' || order == 'A') && strcmp(knd[j].tipe, knd[j - 1].tipe) < 0)
+                        swap = 1;
+                    else if ((order == 'b' || order == 'B') && strcmp(knd[j].tipe, knd[j - 1].tipe) > 0)
+                        swap = 1;
+                    break;
+
+                 case 's': // Berdasarkan Harga
+                    if ((order == 'a' || order == 'A') && knd[j].status < knd[j - 1].status)
+                        swap = 1;
+                    else if ((order == 'b' || order == 'B') && knd[j].status > knd[j - 1].status)
+                        swap = 1;
+                    break;
+
+                default:
+                    printf("Mode pengurutan tidak valid.\n");
+                    return;
+            }
+
+            if (swap) {
+                Kendaraan temp = knd[j];
+                knd[j] = knd[j - 1];
+                knd[j - 1] = temp;
+            }
+        }
+    }
+}
+
+void cariKendaraan(Kendaraan *knd, int jmlKendaraan){
+    char cari[10];
+    printf("Masukkan Nopol Kendaraan yang ingin dicari: ");
+    scanf(" %[^\n]", cari);
+
+   sortingKendaraan(knd, jmlKendaraan, 'n', 'a');
+
+    int flag = 0;
+    int jump = floor(sqrt(jmlKendaraan)); // jump
+    int start = 0; // iterasi
+    int end = jump;
+
+    while(strcmp(knd[end].nopol, cari) < 0  && end < jmlKendaraan){
+        start += jump;
+        end += jump;
+        if(end >= jmlKendaraan-1){
+            end = jmlKendaraan;
+        }
+    }
+
+    for(start; start <= end-1; start++){
+
+        if(strcmp(knd[start].nopol, cari) == 0){
+            flag = 1;
+        printf("_________\n");
+        printf("Nopol: %s\n", knd[start].nopol);
+        printf("Jenis Kendaraan: %s\n", knd[start].jenis);
+        printf("Tipe Kendaraan: %s\n", knd[start].tipe);
+        printf("Harga Sewa: %d\n", knd[start].harga);
+            if(knd[start].status == 0 ){
+                printf("Status: Tersedia\n");
+            }
+            else{
+             printf("Status: Tidak Tersedia\n");
+            }
+        printf("_________\n");
+        }
+
+    }
+    if(flag == 1){
+        printf("Data Ditemukan\n");
+    }
+    else {
+        printf("Data Tidak Ditemukan\n");
+    }
+}
+
 void tambahKendaraan(Kendaraan *knd, int *jmlKendaraan){
     printf("\n=== Tambahkan Kendaraan Baru ===\n");
     printf("Plat Nomor Kendaraan: ");
-    scanf(" %s", knd[*jmlKendaraan].nopol);
+    scanf(" %[^\n]", knd[*jmlKendaraan].nopol);
 
      printf("Jenis Kendaraan: ");
-    scanf(" %s", knd[*jmlKendaraan].jenis);
+    scanf(" %[^\n]", knd[*jmlKendaraan].jenis);
 
      printf("Tipe Kendaraan: ");
-    scanf(" %s", knd[*jmlKendaraan].tipe);
+    scanf(" %[^\n]", knd[*jmlKendaraan].tipe);
 
     printf("Harga Sewa Perhari: ");
     scanf("%d", &knd[*jmlKendaraan].harga);
@@ -260,7 +364,7 @@ void tampilkanPelanggan(Pelanggan *plg, int jmlPelanggan) {
         return;
     }
     for (int i = 0; i < jmlPelanggan; i++) {
-        printf("___________________________\n");
+        printf("_________\n");
         printf("Pelanggan ke-%d\n", i + 1);
         printf("ID: %d\n", plg[i].id);
         printf("Nama: %s\n", plg[i].nama);
@@ -298,10 +402,19 @@ int main() {
     int jmlKendaraan = 0;
     int jmlPelanggan = 0;
 
+     int subMenuTampilPelanggan;
+     int subMenuTampilKendaraan;
+
+     char mode; // ascending or descending
+
+     int subMenuPelanggan;
+     int subMenuKendaraan;
+
+     int pilihanUtama;
+
     bacaFileKendaraan(knd, &jmlKendaraan);
     bacaFilePelanggan(plg, &jmlPelanggan);
 
-      int pilihanUtama;
 
     do {
         printf("\n=== SISTEM MANAJEMEN RENTAL ===\n");
@@ -316,28 +429,93 @@ int main() {
             case 1:
                 printf("\n=== DATA KENDARAAN ===\n");
                 printf("1. Tampilkan Kendaraan\n");
-                printf("2. Tambah Kendaraan\n");
-                printf("3. Ubah Data Kendaraan\n");
-                printf("4. Hapus Data Kendaraan\n");
-                printf("5. Kembali ke Menu Utama\n");
+                printf("2. Cari Kendaraan\n");
+                printf("3. Tambah Kendaraan\n");
+                printf("4. Ubah Data Kendaraan\n");
+                printf("5. Hapus Data Kendaraan\n");
+                printf("6. Kembali ke Menu Utama\n");
                 printf("Pilih Sub-menu: ");
-                int subMenuKendaraan;
+
                 scanf("%d", &subMenuKendaraan);
 
                 switch (subMenuKendaraan) {
                     case 1:
-                       tampilkanKendaraan(knd, jmlKendaraan);
+                    printf("\n=== TAMPILKAN DATA KENDARAAN ===\n");
+                    printf("1. Tampilkan Seluruh Kendaraan\n");
+                    printf("2. Urutkan Berdasarkan NOPOL\n");
+                    printf("3. Urutkan Berdasarkan Jenis\n");
+                    printf("4. Urutkan Berdasarkan Tipe\n");
+                    printf("5. Urutkan Berdasarkan Harga\n");
+                    printf("6. Urutkan Berdasarkan Status\n");
+                    printf("7. Kembali ke Menu Utama\n");
+                    printf("Pilih untuk menampilkan kendaraan: ");
+
+                    scanf("%d", &subMenuTampilKendaraan);
+                    if(subMenuTampilKendaraan >=2 && subMenuTampilKendaraan <7){
+                    printf("a. Ascending\n");
+                    printf("b. Descending\n");
+                    printf("Urutkan berdasarkan (a-b) : ");
+                    scanf(" %c", &mode);
+                    }
+                    switch (subMenuTampilKendaraan) {
+                        case 1:
+                            printf("\n=== TAMPILKAN SELURUH KENDARAAN ===\n");
+                            tampilkanKendaraan(knd, jmlKendaraan);
+                            break;
+
+                        case 2:
+                            printf("\n=== URUTKAN KENDARAAN BERDASARKAN NOPOL ===\n");
+                            sortingKendaraan(knd, jmlKendaraan, 'n', mode); // 'n' untuk sorting berdasarkan NOPOL
+                            tampilkanKendaraan(knd, jmlKendaraan);
+                            break;
+
+                        case 3:
+                            printf("\n=== URUTKAN KENDARAAN BERDASARKAN JENIS ===\n");
+                            sortingKendaraan(knd, jmlKendaraan, 'j', mode); // 'j' untuk sorting berdasarkan Jenis
+                            tampilkanKendaraan(knd, jmlKendaraan);
+                            break;
+
+                        case 4:
+                            printf("\n=== URUTKAN KENDARAAN BERDASARKAN TIPE ===\n");
+                            sortingKendaraan(knd, jmlKendaraan, 't', mode); // 't' untuk sorting berdasarkan Tipe
+                            tampilkanKendaraan(knd, jmlKendaraan);
+                            break;
+
+                        case 5:
+                            printf("\n=== URUTKAN KENDARAAN BERDASARKAN HARGA ===\n");
+                            sortingKendaraan(knd, jmlKendaraan, 'h', mode); // 'h' untuk sorting berdasarkan Harga
+                            tampilkanKendaraan(knd, jmlKendaraan);
+                            break;
+
+                        case 6:
+                            printf("\n=== URUTKAN KENDARAAN BERDASARKAN STATUS ===\n");
+                            sortingKendaraan(knd, jmlKendaraan, 's', mode); // 's' untuk sorting berdasarkan Status
+                            tampilkanKendaraan(knd, jmlKendaraan);
+                            break;
+
+                        case 7:
+                            printf("Kembali ke Menu Kendaraan.\n");
+                            break;
+
+                        default:
+                            printf("Pilihan tidak valid.\n");
+                            break;
+                        }
                         break;
                     case 2:
+
+                      cariKendaraan(knd, jmlKendaraan);
+                      break;
+                    case 3:
                        tambahKendaraan(knd, &jmlKendaraan);
                         break;
-                    case 3:
+                    case 4:
                        updateKendaraan(knd, jmlKendaraan);
                         break;
-                    case 4:
+                    case 5:
                        deleteKendaraan(knd, &jmlKendaraan);
                         break;
-                    case 5:
+                    case 6:
                         printf("Kembali ke Menu Utama.\n");
                         break;
                     default:
@@ -349,28 +527,70 @@ int main() {
             case 2:
                 printf("\n=== DATA PELANGGAN ===\n");
                 printf("1. Tampilkan Pelanggan\n");
-                printf("2. Tambah Pelanggan\n");
-                printf("3. Update Pelanggan\n");
-                printf("4. Hapus Pelanggan\n");
-                printf("5. Kembali ke Menu Utama\n");
+                printf("2. Cari Pelanggan\n");
+                printf("3. Tambah Pelanggan\n");
+                printf("4. Update Pelanggan\n");
+                printf("5. Hapus Pelanggan\n");
+                printf("6. Kembali ke Menu Utama\n");
                 printf("Pilih Sub-menu: ");
-                  int subMenuPelanggan;
+
                 scanf("%d", &subMenuPelanggan);
 
                 switch (subMenuPelanggan) {
                     case 1:
-                         tampilkanPelanggan(plg, jmlPelanggan);
+                         printf("\n=== TAMPILKAN DATA PELANGGAN ===\n");
+                    printf("1. Tampilkan Seluruh Pelanggan\n");
+                    printf("2. Urutkan Berdasarkan Id\n");
+                    printf("3. Urutkan Berdasarkan Nama\n");
+                    printf("4. Kembali ke Menu Utama\n");
+                    printf("Pilih untuk menampilkan pelanggan: ");
+
+                    scanf("%d", &subMenuTampilPelanggan);
+                    if(subMenuTampilPelanggan >=2 && subMenuTampilPelanggan <4){
+                    printf("a. Ascending\n");
+                    printf("b. Descending\n");
+                    printf("Urutkan berdasarkan (a-b) : ");
+                    scanf(" %c", &mode);
+                    }
+                    switch (subMenuTampilPelanggan) {
+                        case 1:
+                            printf("\n=== TAMPILKAN SELURUH PELANGGAN ===\n");
+                            tampilkanPelanggan(plg,jmlPelanggan);
+                            break;
+
+                        case 2:
+                            printf("\n=== URUTKAN KENDARAAN BERDASARKAN ID ===\n");
+
+                            break;
+
+                        case 3:
+                            printf("\n=== URUTKAN KENDARAAN BERDASARKAN NAMA ===\n");
+
+                            break;
+
+                        case 4:
+                            printf("Kembali ke Menu Kendaraan.\n");
+                            break;
+
+                        default:
+                            printf("Pilihan tidak valid.\n");
+                            break;
+                        }
+                        // tampilkanPelanggan(plg, jmlPelanggan);
                         break;
                     case 2:
                         tambahPelanggan(plg, &jmlPelanggan);
                         break;
                     case 3:
-                         updatePelanggan(plg, jmlPelanggan);
+                        tambahPelanggan(plg, &jmlPelanggan);
                         break;
                     case 4:
-                        deletePelanggan(plg, &jmlPelanggan);
+                         updatePelanggan(plg, jmlPelanggan);
                         break;
                     case 5:
+                        deletePelanggan(plg, &jmlPelanggan);
+                        break;
+                    case 6:
                         printf("Kembali ke Menu Utama.\n");
                         break;
                     default:
