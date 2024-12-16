@@ -32,7 +32,7 @@ void tampilkanKendaraan(Kendaraan *knd, int jmlKendaraan) {
         return;
     }
     for (int i = 0; i < jmlKendaraan; i++) {
-        printf("_________\n");
+        printf("_\n");
         printf("Kendaraan ke-%d\n", i + 1);
         printf("Nopol: %s\n", knd[i].nopol);
         printf("Jenis Kendaraan: %s\n", knd[i].jenis);
@@ -127,7 +127,7 @@ void cariKendaraan(Kendaraan *knd, int jmlKendaraan){
 
         if(strcmp(knd[start].nopol, cari) == 0){
             flag = 1;
-        printf("_________\n");
+        printf("_\n");
         printf("Nopol: %s\n", knd[start].nopol);
         printf("Jenis Kendaraan: %s\n", knd[start].jenis);
         printf("Tipe Kendaraan: %s\n", knd[start].tipe);
@@ -138,7 +138,7 @@ void cariKendaraan(Kendaraan *knd, int jmlKendaraan){
             else{
              printf("Status: Tidak Tersedia\n");
             }
-        printf("_________\n");
+        printf("_\n");
         }
 
     }
@@ -272,6 +272,43 @@ void deleteKendaraan(Kendaraan *knd, int *jmlKendaraan) {
     }
 }
 
+void sortPelangganByName(Pelanggan *plg, int jmlPelanggan, char mode) {
+    printf("\n=== Sorting Pelanggan Berdasarkan Nama ===\n");
+    if (jmlPelanggan == 0) {
+        printf("Belum ada pelanggan yang terdaftar. Sorting tidak dapat dilakukan.\n");
+        return;
+    }
+
+    int i, j, targetIndex;
+    Pelanggan temp;
+
+    for (i = 0; i < jmlPelanggan - 1; i++) {
+        targetIndex = i;
+        for (j = i + 1; j < jmlPelanggan; j++) {
+            // Mode ascending
+            if (mode == 'a' && strcmp(plg[j].nama, plg[targetIndex].nama) < 0) {
+                targetIndex = j;
+            }
+            // Mode descending
+            else if (mode == 'b' && strcmp(plg[j].nama, plg[targetIndex].nama) > 0) {
+                targetIndex = j;
+            }
+        }
+
+        // Tukar pelanggan jika diperlukan
+        if (targetIndex != i) {
+            temp = plg[i];
+            plg[i] = plg[targetIndex];
+            plg[targetIndex] = temp;
+        }
+    }
+
+    printf("Sorting pelanggan berdasarkan nama selesai. Berikut daftar pelanggan yang telah diurutkan:\n");
+    tampilkanPelanggan(plg, jmlPelanggan);
+}
+
+
+
 void tambahPelanggan(Pelanggan *plg, int *jmlPelanggan) {
     printf("\n=== Tambahkan Pelanggan Baru ===\n");
     printf("ID Pelanggan: ");
@@ -364,7 +401,7 @@ void tampilkanPelanggan(Pelanggan *plg, int jmlPelanggan) {
         return;
     }
     for (int i = 0; i < jmlPelanggan; i++) {
-        printf("_________\n");
+        printf("_\n");
         printf("Pelanggan ke-%d\n", i + 1);
         printf("ID: %d\n", plg[i].id);
         printf("Nama: %s\n", plg[i].nama);
@@ -565,7 +602,7 @@ int main() {
 
                         case 3:
                             printf("\n=== URUTKAN KENDARAAN BERDASARKAN NAMA ===\n");
-
+                            sortPelangganByName(plg, jmlPelanggan, mode);
                             break;
 
                         case 4:
@@ -579,7 +616,7 @@ int main() {
                         // tampilkanPelanggan(plg, jmlPelanggan);
                         break;
                     case 2:
-                        tambahPelanggan(plg, &jmlPelanggan);
+
                         break;
                     case 3:
                         tambahPelanggan(plg, &jmlPelanggan);
