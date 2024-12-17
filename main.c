@@ -1,4 +1,4 @@
-	#include <stdio.h>
+#include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
@@ -32,7 +32,7 @@
             return;
         }
         for (int i = 0; i < jmlKendaraan; i++) {
-            printf("___\n");
+            printf("_\n");
             printf("Kendaraan ke-%d\n", i + 1);
             printf("Nopol: %s\n", knd[i].nopol);
             printf("Jenis Kendaraan: %s\n", knd[i].jenis);
@@ -127,7 +127,7 @@
 
             if(strcmp(knd[start].nopol, cari) == 0){
                 flag = 1;
-            printf("___\n");
+            printf("_\n");
             printf("Nopol: %s\n", knd[start].nopol);
             printf("Jenis Kendaraan: %s\n", knd[start].jenis);
             printf("Tipe Kendaraan: %s\n", knd[start].tipe);
@@ -138,7 +138,7 @@
                 else{
                  printf("Status: Tidak Tersedia\n");
                 }
-            printf("___\n");
+            printf("_\n");
             }
 
         }
@@ -271,7 +271,40 @@
             printf("Kendaraan dengan Nopol %s tidak ditemukan.\n", nopolCari);
         }
     }
+    void sortPelangganById(Pelanggan *plg, int jmlPelanggan, char mode) {
+    if (jmlPelanggan == 0) {
+        printf("Belum ada pelanggan yang terdaftar. Sorting tidak dapat dilakukan.\n");
+        return;
+    }
 
+    int i, j;
+    Pelanggan temp;
+
+    // Insertion Sort
+    for (i = 1; i < jmlPelanggan; i++) {
+        temp = plg[i];
+        j = i - 1;
+
+        if (mode == 'a') { // Ascending
+            while (j >= 0 && plg[j].id > temp.id) {
+                plg[j + 1] = plg[j];
+                j--;
+            }
+        }
+        else if (mode == 'b') { // Descending
+            while (j >= 0 && plg[j].id < temp.id) {
+                plg[j + 1] = plg[j];
+                j--;
+            }
+        } else {
+            printf("Mode tidak valid! Gunakan 'a' untuk ascending atau 'd' untuk descending.\n");
+            return;
+        }
+
+
+        plg[j + 1] = temp;
+    }
+    }
     void sortPelangganByName(Pelanggan *plg, int jmlPelanggan, char mode) {
         printf("\n=== Sorting Pelanggan Berdasarkan Nama ===\n");
         if (jmlPelanggan == 0) {
@@ -443,7 +476,7 @@
             return;
         }
         for (int i = 0; i < jmlPelanggan; i++) {
-            printf("___\n");
+            printf("_\n");
             printf("Pelanggan ke-%d\n", i + 1);
             printf("ID: %d\n", plg[i].id);
             printf("Nama: %s\n", plg[i].nama);
@@ -639,7 +672,8 @@
 
                             case 2:
                                 printf("\n=== URUTKAN KENDARAAN BERDASARKAN ID ===\n");
-
+                                sortPelangganById(plg, jmlPelanggan, mode);
+                                tampilkanPelanggan(plg,jmlPelanggan);
                                 break;
 
                             case 3:
