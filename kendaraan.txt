@@ -1,3 +1,25 @@
-L001QT,Mobil,Fortuner VRZ 2020,750000,0
-L4625ZX,Sepeda Motor,Kawasaki ZX25RR 2022,650000,0
-L5564KS,Sepeda Motor,Honda Beat 2021,150000,0
+AB1122ST,Mobil,Isuzu Panther LS 2019,350000,1
+AB910GH,Mobil,Honda Jazz RS 2019,350000,1
+AD4455GH,Mobil,Toyota Kijang Innova 2022,400000,1
+AG1234YZ,Sepeda Motor,Honda Beat FI 2022,150000,0
+AG5566ZA,Mobil,Suzuki Carry Pick Up 2022,270000,1
+B1234CD,Mobil,Toyota Avanza 2021,300000,1
+B2233CD,Mobil,Suzuki Ertiga GL 2021,280000,1
+B3344WX,Mobil,Mitsubishi Xpander Ultimate 20êA,410000,1
+BK3344KL,Mobil,Mitsubishi Pajero Sport 2022,500000,1
+BK6677KL,Mobil,Honda HR-V Prestige 2023,480000,1
+D3344EF,Sepeda Motor,Yamaha Aerox 155 2023,170000,0
+D5678EF,Sepeda Motor,Yamaha R15 V3 2020,200000,0
+D6677BC,Sepeda Motor,Honda Scoopy 2023,160000,0
+F5566MN,Sepeda Motor,Honda CBR 150R 2021,190000,0
+F7788MN,Sepeda Motor,Yamaha XMAX 250 2022,250000,0
+H7788OP,Mobil,Ford Ranger Wildtrak 2023,700000,1
+H8899OP,Mobil,Daihatsu Terios X 2020,320000,1
+L462ZX,Sepeda Motor,Kawasaki ZX25 RR 2022,400000,0
+L9900QR,Sepeda Motor,Honda Vario 160 2023,180000,0
+N1122IJ,Sepeda Motor,Suzuki GSX R150 2021,180000,0
+N5566IJ,Sepeda Motor,Suzuki Nex II 2021,140000,0
+T1122UV,Mobil,Nissan Serena 2018,400000,1
+W2233UV,Sepeda Motor,Kawasaki KLX 150 BF 2022,200000,0
+W9900QR,Sepeda Motor,Yamaha MT-15 2020,220000,0
+Z4455YZ,Sepeda Motor,Yamaha Mio S 2020,130000,0

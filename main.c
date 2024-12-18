@@ -1,4 +1,4 @@
-#include <stdio.h>
+    #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
@@ -18,12 +18,17 @@
     } Pelanggan;
 
     typedef struct{
-        int idTransaksi;
-        int idKendaraan;
-        int idPelanggan;
-        int durasi;
+    char KodeTransaksi[20];
+    char nopol[10];
+    int idPelanggan;
+    int durasi;
+    int totalHarga;
 
-    } Transaksi;
+} Transaksi;
+
+
+int getIndexKendaraan; // untuk mendapatkan index kendaraan
+int getIndexPelanggan; // untuk mendapatkan index pelanggan
 
     void tampilkanKendaraan(Kendaraan *knd, int jmlKendaraan) {
         printf("\n=== DAFTAR KENDARAAN ===\n");
@@ -103,52 +108,62 @@
         }
     }
 
-    void cariKendaraan(Kendaraan *knd, int jmlKendaraan){
-        char cari[10];
-        printf("Masukkan Nopol Kendaraan yang ingin dicari: ");
-        scanf(" %[^\n]", cari);
+ void cariKendaraan(Kendaraan *knd, int jmlKendaraan) {
+    char cari[10];
 
-       sortingKendaraan(knd, jmlKendaraan, 'n', 'a');
+    if (jmlKendaraan == 0) {
+        printf("Belum ada data kendaraan untuk dicari\n");
+        return;
+    }
 
-        int flag = 0;
-        int jump = floor(sqrt(jmlKendaraan)); // jump
-        int start = 0; // iterasi
-        int end = jump;
+    printf("Masukkan Nopol Kendaraan yang ingin dicari: ");
+    scanf(" %[^\n]", cari);
 
-        while(strcmp(knd[end].nopol, cari) < 0  && end < jmlKendaraan){
-            start += jump;
-            end += jump;
-            if(end >= jmlKendaraan-1){
-                end = jmlKendaraan;
-            }
-        }
+    sortingKendaraan(knd, jmlKendaraan, 'n', 'a'); // Pastikan data sudah terurut
 
-        for(start; start <= end-1; start++){
+    int flag = 0; // Menandai apakah data ditemukan
+    int jump = floor(sqrt(jmlKendaraan)); // Langkah lompat
+    int start = 0; // Awal iterasi
+    int end = jump;
 
-            if(strcmp(knd[start].nopol, cari) == 0){
-                flag = 1;
-            printf("_\n");
-            printf("Nopol: %s\n", knd[start].nopol);
-            printf("Jenis Kendaraan: %s\n", knd[start].jenis);
-            printf("Tipe Kendaraan: %s\n", knd[start].tipe);
-            printf("Harga Sewa: %d\n", knd[start].harga);
-                if(knd[start].status == 0 ){
-                    printf("Status: Tersedia\n");
-                }
-                else{
-                 printf("Status: Tidak Tersedia\n");
-                }
-            printf("_\n");
-            }
-
-        }
-        if(flag == 1){
-            printf("Data Ditemukan\n");
-        }
-        else {
-            printf("Data Tidak Ditemukan\n");
+    // Jumping Search: Mencari blok yang mungkin mengandung data
+    while (start < jmlKendaraan && strcmp(knd[end - 1].nopol, cari) < 0) {
+        start = end;
+        end += jump;
+        if (end >= jmlKendaraan) {
+            end = jmlKendaraan; // Pastikan tidak melebihi batas array
         }
     }
+
+    // Linear Search dalam blok yang ditemukan
+    for (int i = start; i < end; i++) {
+        if (strcmp(knd[i].nopol, cari) == 0) {
+            flag = 1;
+            printf("_________\n");
+            printf("Nopol: %s\n", knd[i].nopol);
+            printf("Jenis Kendaraan: %s\n", knd[i].jenis);
+            printf("Tipe Kendaraan: %s\n", knd[i].tipe);
+            printf("Harga Sewa: %d\n", knd[i].harga);
+            if (knd[i].status == 0) {
+                printf("Status: Tersedia\n");
+            } else {
+                printf("Status: Tidak Tersedia\n");
+            }
+            getIndexKendaraan = i; // Simpan indeks kendaraan yang ditemukan
+            printf("_________\n");
+            break; // Hentikan pencarian setelah data ditemukan
+        }
+    }
+
+    // Jika data tidak ditemukan, beri output
+    if (!flag) {
+        getIndexKendaraan = -1; // Tandai bahwa data tidak ditemukan
+        printf("Data Tidak Ditemukan\n");
+    }
+    else{
+        printf("Data Ditemukan\n");
+    }
+}
 
     void tambahKendaraan(Kendaraan *knd, int *jmlKendaraan){
         printf("\n=== Tambahkan Kendaraan Baru ===\n");
@@ -185,10 +200,8 @@
         }
 
         fclose(file);
-        printf("Data kendaraan berhasil disimpan ke file.\n");
+        //printf("Data kendaraan berhasil disimpan ke file.\n");
     }
-
-
 
     void bacaFileKendaraan(Kendaraan *knd, int *jmlKendaraan) {
         FILE *file = fopen("kendaraan.txt", "r");
@@ -204,43 +217,30 @@
         }
 
         fclose(file);
-        printf("Data Kendaraan berhasil dibaca dari file %s.\n", "kendaraan.txt");
+       // printf("Data Kendaraan berhasil dibaca dari file %s.\n", "kendaraan.txt");
     }
     void updateKendaraan(Kendaraan *knd, int jmlKendaraan) {
-        char nopolCari[10];
-        int found = 0;
-
         // Mencari kendaraan berdasarkan nopol
-        printf("Masukkan Nopol Kendaraan yang ingin diupdate: ");
-        scanf(" %[^\n]", nopolCari);
-
-        for (int i = 0; i < jmlKendaraan; i++) {
-            if (strcmp(knd[i].nopol, nopolCari) == 0) {
-                found = 1;
-                // Memperbarui data kendaraan
-                printf("Kendaraan ditemukan! Silakan masukkan data baru:\n");
+        cariKendaraan(knd,jmlKendaraan);
+        if(getIndexKendaraan != -1){
+        printf("Silakan Masukan Kendaraan Baru:\n");
 
                 printf("Plat Nomor Kendaraan: ");
-                scanf(" %[^\n]", knd[i].nopol);
+                scanf(" %[^\n]", knd[getIndexKendaraan].nopol);
 
                 printf("Jenis Kendaraan: ");
-                scanf(" %[^\n]", knd[i].jenis);
+                scanf(" %[^\n]", knd[getIndexKendaraan].jenis);
 
                 printf("Tipe Kendaraan: ");
-                scanf(" %[^\n]", knd[i].tipe);
+                scanf(" %[^\n]", knd[getIndexKendaraan].tipe);
 
                 printf("Harga Sewa Perhari: ");
-                scanf("%d", &knd[i].harga);
+                scanf("%d", &knd[getIndexKendaraan].harga);
 
                 // Status tetap tidak berubah
-                printf("Kendaraan berhasil diupdate!\n");
-                break;
-            }
+                printf("Data Kendaraan Berhasil Diperbarui.\n");
         }
 
-        if (!found) {
-            printf("Kendaraan dengan Nopol %s tidak ditemukan.\n", nopolCari);
-        }
     }
 
     void deleteKendaraan(Kendaraan *knd, int *jmlKendaraan) {
@@ -306,7 +306,6 @@
     }
     }
     void sortPelangganByName(Pelanggan *plg, int jmlPelanggan, char mode) {
-        printf("\n=== Sorting Pelanggan Berdasarkan Nama ===\n");
         if (jmlPelanggan == 0) {
             printf("Belum ada pelanggan yang terdaftar. Sorting tidak dapat dilakukan.\n");
             return;
@@ -340,36 +339,65 @@
        // tampilkanPelanggan(plg, jmlPelanggan);
     }
 
-   void cariPelanggan(Pelanggan *plg, int jmlPelanggan) {
-    char cari[50];
-    printf("Masukkan Nama Pelanggan yang ingin dicari: ");
-    scanf(" %[^\n]", cari);
+   void cariPelanggan(Pelanggan *plg, int jmlPelanggan, char mode) {
+    if (jmlPelanggan == 0) {
+        printf("Belum ada data pelanggan untuk dicari\n");
+        return;
+    }
 
-    // Sort pelanggan berdasarkan nama (ascending)
-    sortPelangganByName(plg, jmlPelanggan, 'a');
+    // Variabel pencarian
+    char cariNama[50];
+    int cariId;
 
+    if (mode == 'n') {
+        printf("Masukkan Nama Pelanggan yang ingin dicari: ");
+        scanf(" %[^\n]", cariNama);
+
+        // Sort pelanggan berdasarkan nama (ascending)
+        sortPelangganByName(plg, jmlPelanggan, 'a');
+    } else if (mode == 'i') {
+        printf("Masukkan ID Pelanggan yang ingin dicari: ");
+        scanf("%d", &cariId);
+
+        // Sort pelanggan berdasarkan ID (ascending)
+        sortPelangganById(plg, jmlPelanggan, 'a');
+    } else {
+        printf("Mode pencarian tidak valid.\n");
+        return;
+    }
+
+    // Jumping Search
     int flag = 0;
     int jump = sqrt(jmlPelanggan); // langkah pencarian
-    int start = 0; // indeks awal
+    int start = 0;                // indeks awal
     int end = jump;
 
-    // Melakukan lompatan sampai rentang yang sesuai ditemukan
-    while (start < jmlPelanggan && strcmp(plg[end - 1].nama, cari) < 0) {
+    while (start < jmlPelanggan) {
+        // Tentukan batas akhir agar tidak melewati indeks array
+        if (end > jmlPelanggan) end = jmlPelanggan;
+
+        // Cek apakah data mungkin ada dalam rentang ini
+        if (mode == 'n' && strcmp(plg[end - 1].nama, cariNama) >= 0) {
+            break;
+        }
+        if (mode == 'i' && plg[end - 1].id >= cariId) {
+            break;
+        }
+
         start = end;
         end += jump;
-        if (end >= jmlPelanggan) {
-            end = jmlPelanggan; // Pastikan tidak melebihi indeks akhir
-        }
     }
 
     // Pencarian linear pada rentang yang ditemukan
     for (int i = start; i < end; i++) {
-        if (strcmp(plg[i].nama, cari) == 0) {
+        if ((mode == 'n' && strcmp(plg[i].nama, cariNama) == 0) ||
+            (mode == 'i' && plg[i].id == cariId)) {
             flag = 1;
             printf("_\n");
             printf("ID: %d\n", plg[i].id);
             printf("Nama Pelanggan: %s\n", plg[i].nama);
             printf("Nomor Kontak: %s\n", plg[i].nomorKontak);
+            getIndexPelanggan = i; // Simpan indeks pelanggan
             printf("_\n");
             break;
         }
@@ -378,10 +406,10 @@
     if (flag) {
         printf("Data Ditemukan\n");
     } else {
+        getIndexPelanggan = -1; // Tandai data tidak ditemukan
         printf("Data Tidak Ditemukan\n");
     }
 }
-
 
 
     void tambahPelanggan(Pelanggan *plg, int *jmlPelanggan) {
@@ -409,33 +437,23 @@
             fprintf(file, "%d,%s,%s\n", plg[i].id, plg[i].nama, plg[i].nomorKontak);
         }
         fclose(file);
-        printf("Data pelanggan berhasil disimpan ke file.\n");
+        //printf("Data pelanggan berhasil disimpan ke file.\n");
     }
 
     void updatePelanggan(Pelanggan *plg, int jmlPelanggan) {
-        int id, found = 0;
-        printf("\n=== Update Pelanggan ===\n");
-        printf("Masukkan ID Pelanggan yang ingin diperbarui: ");
-        scanf("%d", &id);
-
-        for (int i = 0; i < jmlPelanggan; i++) {
-            if (plg[i].id == id) {
-                found = 1;
-                printf("Pelanggan ditemukan: Nama: %s, Nomor Kontak: %s\n", plg[i].nama, plg[i].nomorKontak);
-
-                printf("Masukkan Nama Baru: ");
-                scanf(" %[^\n]", plg[i].nama); // Input nama menggunakan scanf
+        printf("\n=== Update Data Pelanggan ===\n");
+        cariPelanggan(plg,jmlPelanggan, 'i');
+        if(getIndexPelanggan != -1){
+        printf("Silakan Masukkan Data Pelanggan Baru:\n");
+               printf("Masukkan Nama Baru: ");
+                scanf(" %[^\n]", plg[getIndexPelanggan].nama); // Input nama
 
                 printf("Masukkan Nomor Kontak Baru: ");
-                scanf(" %[^\n]", plg[i].nomorKontak); // Input nomor kontak menggunakan scanf
+                scanf(" %[^\n]", plg[getIndexPelanggan].nomorKontak); // Input nomor kontak
 
-                printf("Data pelanggan berhasil diperbarui.\n");
-                break;
-            }
+                printf("Data Pelanggan berhasil Diperbarui.\n");
         }
-        if (!found) {
-            printf("Pelanggan dengan ID %d tidak ditemukan.\n", id);
-        }
+
     }
 
 
@@ -467,8 +485,6 @@
         }
     }
 
-
-
     void tampilkanPelanggan(Pelanggan *plg, int jmlPelanggan) {
         printf("\n=== DAFTAR PELANGGAN ===\n");
         if (jmlPelanggan == 0) {
@@ -483,8 +499,6 @@
             printf("Nomor Kontak: %s\n", plg[i].nomorKontak);
         }
     }
-
-
 
     void bacaFilePelanggan(Pelanggan *plg, int *jmlPelanggan) {
         FILE *file = fopen("pelanggan.txt", "r");
@@ -503,29 +517,144 @@
         }
 
         fclose(file);
-        printf("Data pelanggan berhasil dibaca dari file %s.\n", "pelanggan.txt");
+       // printf("Data pelanggan berhasil dibaca dari file %s.\n", "pelanggan.txt");
     }
+
+ void tambahTransaksi(Transaksi *tr, int *jmlTransaksi, Kendaraan *knd, int jmlKendaraan ,Pelanggan *plg, int jmlPelanggan) {
+
+    tampilkanKendaraan(knd, jmlKendaraan);
+    do{
+    printf("\n");
+    cariKendaraan(knd, jmlKendaraan);
+
+    if(knd[getIndexKendaraan].status != 0 || getIndexKendaraan == -1){
+        printf("Kendaraan Tidak Tersedia, Harap Pilih Kendaraan Lain\n");
+     }
+    }
+    while(knd[getIndexKendaraan].status != 0 || getIndexKendaraan == -1);
+
+    sortPelangganById(plg, jmlPelanggan, 'a');
+    tampilkanPelanggan(plg, jmlPelanggan);
+    do{
+    printf("\n");
+    cariPelanggan(plg, jmlPelanggan, 'i');
+    if(getIndexPelanggan == -1){
+        printf("Pelanggan Tidak Ditemukan, Tambahkan Pelanggan Jika Belum Terdaftar!\n");
+     }
+    }
+     while( getIndexPelanggan == -1);
+
+    printf("\nMasukkan durasi sewa (dalam hari): ");
+    scanf("%d", &tr[*jmlTransaksi].durasi);
+
+    sprintf(tr[*jmlTransaksi].KodeTransaksi, "TR%03d", *jmlTransaksi + 1);
+    strcpy(tr[*jmlTransaksi].nopol, knd[getIndexKendaraan].nopol);
+    tr[*jmlTransaksi].idPelanggan = plg[getIndexPelanggan].id;
+    tr[*jmlTransaksi].totalHarga = knd[getIndexKendaraan].harga * tr[*jmlTransaksi].durasi;
+    knd[getIndexKendaraan].status = 1;
+    (*jmlTransaksi)++;
+
+    printf("\n=== Transaksi Berhasil ===\n");
+    printf("Kode Transaksi: %s\n", tr[*jmlTransaksi - 1].KodeTransaksi);
+    printf("No. Polisi: %s\n", tr[*jmlTransaksi - 1].nopol);
+    printf("ID Pelanggan: %d\n", tr[*jmlTransaksi - 1].idPelanggan);
+    printf("Durasi: %d hari\n", tr[*jmlTransaksi - 1].durasi);
+    printf("Total Harga: %d\n", tr[*jmlTransaksi - 1].totalHarga);
+}
+
+void ubahStatusKendaraan(Kendaraan *knd, int jmlKendaraan){
+    do{
+    printf("\n");
+    cariKendaraan(knd, jmlKendaraan);
+
+
+    if(getIndexKendaraan == -1){
+        printf("Kendaraan Tidak Tersedia, Harap Pilih Kendaraan Lain\n");
+     }
+    }
+  while(getIndexKendaraan == -1);
+  knd[getIndexKendaraan].status = 0;
+
+  printf("Status Kendaraan Telah di Ubah || Pesanan Selesai \n");
+}
+
+void tampilkanTransaksi(Transaksi *tr, int jmlTransaksi) {
+    printf("\n=== DAFTAR TRANSAKSI ===\n");
+    if (jmlTransaksi == 0) {
+        printf("Belum ada transaksi.\n");
+        return;
+    }
+    for (int i = 0; i < jmlTransaksi; i++) {
+        printf("_________\n");
+        printf("Transaksi ke-%d\n", i + 1);
+        printf("Kode Transaksi: %s\n", tr[i].KodeTransaksi);
+        printf("Nopol: %s\n", tr[i].nopol);
+        printf("Durasi: %d Hari\n", tr[i].durasi);
+        printf("Total Harga: %d\n", tr[i].totalHarga);
+    }
+}
+
+void simpanTransaksi(Transaksi *tr, int jmlTransaksi) {
+    FILE *file = fopen("transaksi.txt", "w");
+    if (!file) {
+        printf("Gagal membuka file untuk menyimpan transaksi.\n");
+        return;
+    }
+    for (int i = 0; i < jmlTransaksi; i++) {
+        fprintf(file, "%s,%s,%d,%d,%d\n", tr[i].KodeTransaksi, tr[i].nopol, tr[i].idPelanggan, tr[i].durasi, tr[i].totalHarga);
+    }
+    fclose(file);
+  //  printf("Data Transaksi berhasil disimpan ke file.\n");
+}
+
+void bacaFileTransaksi(Transaksi *tr, int *jmlTransaksi) {
+    FILE *file = fopen("transaksi.txt", "r");
+    if (!file) {
+        printf("Gagal membuka file untuk membaca transaksi.\n");
+        return;
+    }
+
+    *jmlTransaksi = 0; // Reset jumlah transaksi sebelum membaca
+
+    while (fscanf(file, "%[^,],%[^,],%d,%d,%d\n",
+                  tr[*jmlTransaksi].KodeTransaksi,
+                  tr[*jmlTransaksi].nopol,
+                  &tr[*jmlTransaksi].idPelanggan,
+                  &tr[*jmlTransaksi].durasi,
+                  &tr[*jmlTransaksi].totalHarga) != EOF)
+    {
+        (*jmlTransaksi)++;
+    }
+
+    fclose(file);
+   // printf("Data Transaksi berhasil dibaca dari file.\n");
+}
+
 
     // Fungsi utama
     int main() {
         Pelanggan plg[100];
         Kendaraan knd[100];
+        Transaksi tr[100];
 
         int jmlKendaraan = 0;
         int jmlPelanggan = 0;
+        int jmlTransaksi = 0;
 
-         int subMenuTampilPelanggan;
-         int subMenuTampilKendaraan;
+        char mode; // ascending or descending
 
-         char mode; // ascending or descending
+        int subMenuPelanggan;
+        int subMenuKendaraan;
+        int subMenuTransaksi;
 
-         int subMenuPelanggan;
-         int subMenuKendaraan;
+        int subMenuTampilPelanggan;
+        int subMenuTampilKendaraan;
 
-         int pilihanUtama;
+        int pilihanUtama;
 
         bacaFileKendaraan(knd, &jmlKendaraan);
         bacaFilePelanggan(plg, &jmlPelanggan);
+        bacaFileTransaksi(tr, &jmlTransaksi);
 
 
         do {
@@ -533,7 +662,8 @@
             printf("1. Data Kendaraan\n");
             printf("2. Data Pelanggan\n");
             printf("3. Transaksi\n");
-            printf("4. Simpan dan Keluar\n");
+            printf("4. Laporan Transaksi\n");
+            printf("5. Simpan dan Keluar\n");
             printf("Pilih Menu: ");
             scanf("%d", &pilihanUtama);
 
@@ -615,7 +745,6 @@
                             }
                             break;
                         case 2:
-
                           cariKendaraan(knd, jmlKendaraan);
                           break;
                         case 3:
@@ -650,7 +779,7 @@
 
                     switch (subMenuPelanggan) {
                         case 1:
-                             printf("\n=== TAMPILKAN DATA PELANGGAN ===\n");
+                        printf("\n=== TAMPILKAN DATA PELANGGAN ===\n");
                         printf("1. Tampilkan Seluruh Pelanggan\n");
                         printf("2. Urutkan Berdasarkan Id\n");
                         printf("3. Urutkan Berdasarkan Nama\n");
@@ -693,7 +822,7 @@
                             // tampilkanPelanggan(plg, jmlPelanggan);
                             break;
                         case 2:
-                            cariPelanggan(plg, jmlPelanggan);
+                            cariPelanggan(plg, jmlPelanggan, 'n');
                             break;
                         case 3:
                             tambahPelanggan(plg, &jmlPelanggan);
@@ -714,19 +843,45 @@
                     break;
 
                 case 3:
-                    simpanPelanggan(plg, jmlPelanggan);
-                    printf("Keluar dari program.\n");
-                    break;
+                                        printf("\n=== TRANSAKSI ===\n");
+                    printf("1. Tambah Transaksi\n");
+                    printf("2. Selesaikan Transaksi\n");
+                    printf("3. Kembali ke Menu Utama\n");
+                    printf("Pilih Menu : ");
+                    scanf("%d", &subMenuTransaksi);
+
+                    switch(subMenuTransaksi){
+                    case 1 :
+                        printf("\n=== TAMBAH TRANSAKSI ===\n");
+                        tambahTransaksi(tr, &jmlTransaksi, knd, jmlKendaraan, plg, jmlPelanggan);
+                    // printf("%s", plg[getIndexPelanggan].nama);
+                        break;
+                    case 2 :
+                        ubahStatusKendaraan(knd, jmlKendaraan);
+                        break;
+                    case 3 :
+                        printf("Kembali Ke Menu Utama\n");
+                        break;
+                    default:
+                        printf("Pilihan tidak valid.\n");
+                        break;
+                    }
+                break;
                 case 4:
-                    simpanKendaraan(knd, jmlKendaraan);
-                    simpanPelanggan(plg, jmlPelanggan);
-                    printf("Keluar dari program.\n");
-                    break;
+                tampilkanTransaksi(tr, jmlTransaksi);
+               // printf("Keluar dari program.\n");
+                break;
+            case 5:
+                simpanKendaraan(knd, jmlKendaraan);
+                simpanPelanggan(plg, jmlPelanggan);
+                simpanTransaksi(tr, jmlTransaksi);
+                printf("Keluar dari program.\n");
+                break;
                 default:
                     printf("Pilihan tidak valid.\n");
                     break;
             }
-        } while (pilihanUtama != 4);
+        } while (pilihanUtama != 5);
 
         return 0;
     }
